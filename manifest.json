@@ -1,18 +1,11 @@
 {
-  "name": "Khan Calculator",
-  "short_name": "Khan Calc",
-  "start_url": "./",
-  "display": "standalone",
-  "background_color": "#111827",
-  "theme_color": "#111111",
-  "orientation": "portrait",
-  "description": "A simple mobile calculator by Khan.",
-  "icons": [
-    {
-      "src": "icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    }
-  ]
+  "name":"Khan Calculator",
+  "short_name":"Khan Calc",
+  "start_url":"./",
+  "display":"standalone",
+  "background_color":"#ffffff",
+  "theme_color":"#ffffff",
+  "orientation":"portrait",
+  "description":"A clean mobile calculator with history, unit converter and portrait mode.",
+  "icons":[{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
 }

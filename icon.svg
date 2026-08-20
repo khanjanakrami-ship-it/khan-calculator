@@ -1,26 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-<defs>
- <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#111827"/><stop offset="1" stop-color="#374151"/></linearGradient>
- <linearGradient id="orange" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffb347"/><stop offset="1" stop-color="#f97316"/></linearGradient>
- <filter id="shadow"><feDropShadow dx="0" dy="14" stdDeviation="14" flood-opacity=".35"/></filter>
-</defs>
-<rect x="30" y="30" width="452" height="452" rx="96" fill="url(#bg)" filter="url(#shadow)"/>
-<rect x="80" y="75" width="352" height="112" rx="28" fill="#f8fafc"/>
-<text x="106" y="125" font-family="Arial,sans-serif" font-weight="800" font-size="42" fill="#111827">KHAN</text>
-<text x="106" y="166" font-family="Arial,sans-serif" font-weight="700" font-size="25" fill="#f97316">CALCULATOR</text>
-<g font-family="Arial,sans-serif" font-weight="800" font-size="32" text-anchor="middle">
- <g fill="#4b5563">
-  <rect x="80" y="215" width="70" height="62" rx="17"/><rect x="165" y="215" width="70" height="62" rx="17"/><rect x="250" y="215" width="70" height="62" rx="17"/>
-  <rect x="80" y="292" width="70" height="62" rx="17"/><rect x="165" y="292" width="70" height="62" rx="17"/><rect x="250" y="292" width="70" height="62" rx="17"/>
-  <rect x="80" y="369" width="155" height="62" rx="17"/><rect x="250" y="369" width="70" height="62" rx="17"/>
- </g>
- <g fill="url(#orange)">
-  <rect x="335" y="215" width="97" height="62" rx="17"/><rect x="335" y="292" width="97" height="139" rx="17"/>
- </g>
- <g fill="#fff">
-  <text x="115" y="257">7</text><text x="200" y="257">8</text><text x="285" y="257">9</text><text x="383" y="257">÷</text>
-  <text x="115" y="334">4</text><text x="200" y="334">5</text><text x="285" y="334">6</text><text x="383" y="334">×</text>
-  <text x="157" y="411">0</text><text x="285" y="411">.</text><text x="383" y="377">=</text>
- </g>
-</g>
-</svg>
+<defs><linearGradient id="o" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff9d22"/><stop offset="1" stop-color="#f97316"/></linearGradient><filter id="s"><feDropShadow dx="0" dy="10" stdDeviation="12" flood-opacity=".18"/></filter></defs>
+<rect x="30" y="30" width="452" height="452" rx="105" fill="#fff" filter="url(#s)"/>
+<path d="M30 135A105 105 0 0 1 135 30h121v226H30z" fill="url(#o)"/><path d="M256 30h121A105 105 0 0 1 482 135v121H256z" fill="#f8fafc"/><path d="M30 256h226v226H135A105 105 0 0 1 30 377z" fill="#f8fafc"/><path d="M256 256h226v121a105 105 0 0 1-105 105H256z" fill="url(#o)"/>
+<g font-family="Arial,sans-serif" font-weight="800" font-size="112" text-anchor="middle" dominant-baseline="central"><text x="143" y="143" fill="#fff">+</text><text x="369" y="143" fill="#111827">−</text><text x="143" y="369" fill="#111827">×</text><text x="369" y="369" fill="#fff">÷</text></g></svg>
