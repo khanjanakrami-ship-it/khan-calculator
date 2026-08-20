@@ -1,26 +1,168 @@
-const display=document.getElementById('display'), expression=document.getElementById('expression');
-let expr='', justEvaluated=false, lastResult=null;
-const historyKey='khanCalcHistory';
-function render(){display.textContent=expr||'0';}
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';clearTimeout(window._toast);window._toast=setTimeout(()=>t.style.display='none',1500)}
-function sanitize(s){return s.replaceAll('×','*').replaceAll('÷','/').replaceAll('−','-').replace(/[^0-9+\-*/().%\s]/g,'')}
-function calculateExpression(s){let x=s.replace(/(\d+(?:\.\d+)?)%/g,'($1/100)');x=sanitize(x);if(!x)return 0;if(!/^[0-9+\-*/().\s]+$/.test(x))throw Error();let v=Function('"use strict";return ('+x+')')();if(!Number.isFinite(v))throw Error();return Number(v.toPrecision(12));}
-function add(v){if(justEvaluated && /[0-9.]/.test(v)){expr='';expression.textContent='';justEvaluated=false} if(v==='.') {let m=expr.split(/[+\-×÷()]/).pop();if(m.includes('.'))return;if(!m)m='0';} if(v==='('){if(expr && /[0-9)]$/.test(expr))expr+='×';} if(/[0-9]/.test(v)&&expr.endsWith(')'))expr+='×'; expr+=v;justEvaluated=false;render()}
-function op(v){if(!expr){if(lastResult!==null)expr=String(lastResult);else return} if(justEvaluated)justEvaluated=false; if(/[+\-×÷]$/.test(expr))expr=expr.slice(0,-1)+v; else expr+=v;render()}
-function clear(){expr='';lastResult=null;expression.textContent='';justEvaluated=false;render()}
-function backspace(){if(justEvaluated){clear();return}expr=expr.slice(0,-1);render()}
-function sign(){if(!expr)return;const m=expr.match(/(\d+(?:\.\d+)?)$/);if(m){const i=expr.length-m[1].length;expr=expr.slice(0,i)+(i>0&&expr[i-1]==='−'?'': '−')+m[1];render()}}
-function paren(){let opens=(expr.match(/\(/g)||[]).length, closes=(expr.match(/\)/g)||[]).length;if(opens>closes && /[0-9)]$/.test(expr))expr+=')';else if(!expr||/[+\-×÷(]$/.test(expr))expr+='(';else expr+='×(';render()}
-function percent(){const m=expr.match(/(\d+(?:\.\d+)?)$/);if(m){expr=expr.slice(0,expr.length-m[1].length)+m[1]+'%';render()}}
-function equals(){if(!expr)return;try{const original=expr;const value=calculateExpression(expr);lastResult=value;expression.textContent=original+' =';display.textContent=String(value);expr=String(value);justEvaluated=true;saveHistory(original,value)}catch{display.textContent='Error';justEvaluated=true}}
-function saveHistory(e,r){const h=JSON.parse(localStorage.getItem(historyKey)||'[]');h.unshift({e,r,t:new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})});localStorage.setItem(historyKey,JSON.stringify(h.slice(0,100)))}
-function renderHistory(){const list=document.getElementById('historyList'),h=JSON.parse(localStorage.getItem(historyKey)||'[]');list.innerHTML=h.length?h.map(x=>`<div class="history-item"><div class="history-expr">${x.e}</div><div class="history-result">= ${x.r}</div><div class="history-time">${x.t}</div></div>`).join(''):'<p style="color:#999;text-align:center;padding:30px">No calculations yet.</p>'}
-const units={Length:{Meter:1,Kilometer:1000,Centimeter:.01,Millimeter:.001,Foot:.3048,Inch:.0254,Mile:1609.344},Area:{"Square meter":1,"Square kilometer":1e6,"Square foot":.092903,"Square inch":.00064516,"Acre":4046.856},Volume:{Liter:1,"Milliliter":.001,"Cubic meter":1000,"Gallon":3.785411784},Weight:{Gram:1,Kilogram:1000,Milligram:.001,Pound:453.59237,Ounce:28.349523125},Temperature:{Celsius:'C',Fahrenheit:'F',Kelvin:'K'},Speed:{"m/s":1,"km/h":.277777778,"mph":.44704,"knot":.514444},Time:{Second:1,Minute:60,Hour:3600,Day:86400},Data:{Byte:1,KB:1024,MB:1048576,GB:1073741824},Energy:{Joule:1,"Kilojoule":1000,"Watt-hour":3600,"Kilowatt-hour":3600000},Pressure:{Pascal:1,"Kilopascal":1000,Bar:100000,PSI:6894.757},Angle:{Degree:1,Radian:57.295779513,Gradian:.9}};
-let currentCat='Length';
-function initConverter(){const cats=document.getElementById('categories');cats.innerHTML=Object.keys(units).map(k=>`<button class="cat-btn ${k==='Length'?'active':''}" data-cat="${k}">${k}</button>`).join('');cats.onclick=e=>{const b=e.target.closest('.cat-btn');if(!b)return;currentCat=b.dataset.cat;cats.querySelectorAll('.cat-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');fillUnits()};document.getElementById('fromValue').addEventListener('input',convert);document.getElementById('fromUnit').addEventListener('change',convert);document.getElementById('toUnit').addEventListener('change',convert);document.getElementById('swapBtn').onclick=()=>{const a=document.getElementById('fromUnit'),b=document.getElementById('toUnit'),v=document.getElementById('fromValue');[a.value,b.value]=[b.value,a.value];convert()};fillUnits()}
-function fillUnits(){const arr=Object.keys(units[currentCat]);document.getElementById('converterTitle').textContent=currentCat;document.getElementById('fromUnit').innerHTML=arr.map(x=>`<option>${x}</option>`).join('');document.getElementById('toUnit').innerHTML=arr.map(x=>`<option>${x}</option>`).join('');if(arr[1])document.getElementById('toUnit').value=arr[1];convert()}
-function convert(){const a=document.getElementById('fromValue'),b=document.getElementById('toValue'),fu=document.getElementById('fromUnit').value,tu=document.getElementById('toUnit').value;let v=Number(a.value)||0;if(currentCat==='Temperature'){let c=fu==='Celsius'?v:fu==='Fahrenheit'?(v-32)*5/9:v-273.15;let out=tu==='Celsius'?c:tu==='Fahrenheit'?c*9/5+32:c+273.15;b.value=Number(out.toPrecision(10))}else{const map=units[currentCat];b.value=Number((v*map[fu]/map[tu]).toPrecision(10))}}
-function showView(name){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(name+'View').classList.add('active');if(name==='history')renderHistory()}
-document.querySelectorAll('.key').forEach(b=>b.addEventListener('click',()=>{const a=b.dataset.action,v=b.dataset.value;if(a==='clear')clear();else if(a==='backspace')backspace();else if(a==='equals')equals();else if(a==='sign')sign();else if(a==='paren')paren();else if(a==='percent')percent();else if(/[+\-×÷]/.test(v||''))op(v);else if(v)add(v)}));
-document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>showView(b.dataset.view));document.querySelectorAll('[data-back]').forEach(b=>b.onclick=()=>showView('calculator'));document.getElementById('portraitBtn').onclick=()=>showView('portrait');document.getElementById('clearHistory').onclick=()=>{localStorage.removeItem(historyKey);renderHistory()};document.getElementById('lockPortrait').onclick=async()=>{try{await screen.orientation.lock('portrait');toast('Portrait locked')}catch{toast('Portrait lock is not supported here')}};document.getElementById('unlockPortrait').onclick=async()=>{try{screen.orientation.unlock();toast('Portrait unlocked')}catch{toast('Portrait unlocked')}};document.getElementById('menuBtn').onclick=()=>toast('Khan Calculator');
-initConverter();render();if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js'));
+const expressionEl=document.getElementById("expression");
+const resultEl=document.getElementById("result");
+const panel=document.getElementById("panel");
+const panelTitle=document.getElementById("panelTitle");
+const panelBody=document.getElementById("panelBody");
+
+let expr="";
+let current="";
+let justEvaluated=false;
+let history=JSON.parse(localStorage.getItem("khanHistory")||"[]");
+
+const ops="+−×÷";
+
+function render(){
+  expressionEl.textContent=expr;
+  resultEl.textContent=current||"0";
+}
+function formatNumber(n){
+  if(!Number.isFinite(n)) return "Error";
+  return Number.isInteger(n)?String(n):String(Number(n.toFixed(12)));
+}
+function sanitize(e){return e.replaceAll("×","*").replaceAll("÷","/").replaceAll("−","-");}
+function calculate(e){
+  if(!e.trim()) return 0;
+  if(!/^[0-9+\-*/().%\s]+$/.test(sanitize(e))) throw Error();
+  let s=sanitize(e).replace(/(\d+(?:\.\d+)?)%/g,"($1/100)");
+  return Function('"use strict";return ('+s+')')();
+}
+function commitHistory(e,r){
+  if(!e) return;
+  history.unshift({e,r,ts:new Date().toLocaleString()});
+  history=history.slice(0,50);
+  localStorage.setItem("khanHistory",JSON.stringify(history));
+}
+function appendDigit(v){
+  if(justEvaluated){expr="";current="";justEvaluated=false}
+  if(v==="." && current.includes(".")) return;
+  if(v==="." && (!current || /[+\-×÷]$/.test(expr))) current="0";
+  current+=v;
+  expr+=v;
+  render();
+}
+function appendOperator(op){
+  if(justEvaluated){expr=current;justEvaluated=false}
+  if(!current && !expr) return;
+  if(/[+\-×÷]$/.test(expr)) expr=expr.slice(0,-1)+op;
+  else expr+=op;
+  current="";
+  render();
+}
+function equals(){
+  if(!expr) return;
+  let e=expr;
+  if(/[+\-×÷]$/.test(e)) e=e.slice(0,-1);
+  try{
+    const r=formatNumber(calculate(e));
+    commitHistory(e,r);
+    expr=e;
+    current=r;
+    justEvaluated=true;
+    render();
+  }catch{current="Error";justEvaluated=true;render()}
+}
+function clearAll(){expr="";current="";justEvaluated=false;render()}
+function backspace(){
+  if(justEvaluated){clearAll();return}
+  if(!expr)return;
+  expr=expr.slice(0,-1);
+  if(/[0-9.]$/.test(expr)) current=current.slice(0,-1);
+  else current="";
+  render();
+}
+function percent(){
+  if(!current)return;
+  const n=parseFloat(current);
+  if(Number.isNaN(n))return;
+  const p=formatNumber(n/100);
+  expr=expr.slice(0,-current.length)+p;
+  current=p;render();
+}
+function sign(){
+  if(!current)return;
+  const n=parseFloat(current);
+  if(Number.isNaN(n))return;
+  const p=formatNumber(-n);
+  expr=expr.slice(0,-current.length)+p;
+  current=p;render();
+}
+
+document.querySelectorAll(".key").forEach(b=>{
+  b.addEventListener("click",()=>{
+    const a=b.dataset.action,v=b.dataset.value;
+    if(a==="clear")clearAll();
+    else if(a==="backspace")backspace();
+    else if(a==="percent")percent();
+    else if(a==="sign")sign();
+    else if(a==="equals")equals();
+    else if(v&&ops.includes(v))appendOperator(v);
+    else if(v)appendDigit(v);
+  });
+});
+
+document.addEventListener("keydown",e=>{
+  if(/[0-9.]/.test(e.key))appendDigit(e.key);
+  else if(["+","-","*","/"].includes(e.key))appendOperator(e.key==="*"?"×":e.key==="/"?"÷":e.key);
+  else if(e.key==="Enter"||e.key==="=")equals();
+  else if(e.key==="Backspace")backspace();
+  else if(e.key==="Escape")clearAll();
+});
+
+function openPanel(title,body){
+  panelTitle.textContent=title;panelBody.innerHTML=body;panel.showModal();
+}
+document.getElementById("closePanel").onclick=()=>panel.close();
+
+document.getElementById("historyBtn").onclick=()=>{
+  const body=history.length?history.map(x=>`<div class="history-item"><b>${x.e} = ${x.r}</b><span>${x.ts}</span></div>`).join(""):"<p>No calculations yet.</p>";
+  openPanel("History",body);
+};
+
+document.getElementById("unitBtn").onclick=()=>{
+  openPanel("Unit Converter",`
+    <div class="converter">
+      <select id="unitType"><option value="length">Length</option><option value="weight">Weight</option><option value="temperature">Temperature</option><option value="area">Area</option><option value="volume">Volume</option><option value="time">Time</option><option value="speed">Speed</option></select>
+      <input id="unitInput" type="number" placeholder="Enter value">
+      <select id="fromUnit"></select><select id="toUnit"></select>
+      <div id="convResult" class="conv-result">—</div>
+    </div>`);
+  setupConverter();
+};
+
+document.getElementById("portraitBtn").onclick=()=>{
+  document.documentElement.style.setProperty("--portrait-active","1");
+  openPanel("Portrait","Portrait layout is active on this device.");
+};
+
+document.getElementById("menuBtn").onclick=()=>openPanel("Khan Calculator","Professional calculator • History • Unit Converter • Portrait");
+
+const units={
+ length:{meter:1,kilometer:1000,centimeter:.01,millimeter:.001,mile:1609.344,yard:.9144,foot:.3048,inch:.0254},
+ weight:{kilogram:1,gram:.001,milligram:.000001,pound:.45359237,ounce:.028349523125},
+ area:{square_meter:1,square_kilometer:1e6,square_centimeter:.0001,square_foot:.09290304,acre:4046.8564224},
+ volume:{liter:1,milliliter:.001,cubic_meter:1000,gallon:3.785411784,cup:.2365882365},
+ time:{second:1,minute:60,hour:3600,day:86400,week:604800},
+ speed:{mps:1,kph:1000/3600,mph:1609.344/3600,knot:1852/3600}
+};
+function setupConverter(){
+  const type=document.getElementById("unitType"),from=document.getElementById("fromUnit"),to=document.getElementById("toUnit"),input=document.getElementById("unitInput"),out=document.getElementById("convResult");
+  function fill(){
+    const t=type.value;const names=t==="temperature"?["celsius","fahrenheit","kelvin"]:Object.keys(units[t]);
+    from.innerHTML=names.map(x=>`<option>${x}</option>`).join("");to.innerHTML=names.map(x=>`<option>${x}</option>`).join("");convert();
+  }
+  function convert(){
+    const v=parseFloat(input.value);if(Number.isNaN(v)){out.textContent="—";return}
+    let r;
+    if(type.value==="temperature"){
+      const c=from.value==="celsius"?v:from.value==="fahrenheit"?(v-32)*5/9:v-273.15;
+      r=to.value==="celsius"?c:to.value==="fahrenheit"?c*9/5+32:c+273.15;
+    }else{
+      const base=v*units[type.value][from.value];r=base/units[type.value][to.value];
+    }
+    out.textContent=`${formatNumber(r)} ${to.value}`;
+  }
+  type.onchange=fill;input.oninput=convert;from.onchange=convert;to.onchange=convert;fill();
+}
+
+if("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("service-worker.js").catch(()=>{}));
+render();
