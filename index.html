@@ -1,77 +1,27 @@
 <!DOCTYPE html>
-<html lang="ps" dir="ltr">
+<html lang="en" dir="ltr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#ffffff">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <title>Khan Calculator</title>
-  <link rel="manifest" href="./manifest.json">
-  <link rel="icon" href="./icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./style.css">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
+<title>Khan Calculator</title><link rel="manifest" href="./manifest.json"><link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="stylesheet" href="./style.css">
 </head>
-<body>
-  <main class="app">
-    <header class="topbar">
-      <button class="icon-btn" id="menuBtn" aria-label="Menu">☰</button>
-      <div class="brand">Khan Calculator</div>
-      <nav class="top-actions">
-        <button class="tool-btn" data-view="history"><span>◷</span><small>History</small></button>
-        <button class="tool-btn" data-view="converter"><span>⇄</span><small>Unit Converter</small></button>
-        <button class="tool-btn" id="portraitBtn"><span>▯</span><small>Portrait</small></button>
-      </nav>
-    </header>
-
-    <section id="calculatorView" class="view active">
-      <div class="display-card">
-        <div id="expression" class="expression"></div>
-        <div id="display" class="result">0</div>
-      </div>
-      <div class="keypad">
-        <button class="key function" data-action="clear">C</button>
-        <button class="key function" data-action="backspace">⌫</button>
-        <button class="key function" data-value="%">%</button>
-        <button class="key operator" data-value="÷">÷</button>
-        <button class="key" data-value="7">7</button><button class="key" data-value="8">8</button><button class="key" data-value="9">9</button><button class="key operator" data-value="×">×</button>
-        <button class="key" data-value="4">4</button><button class="key" data-value="5">5</button><button class="key" data-value="6">6</button><button class="key operator" data-value="−">−</button>
-        <button class="key" data-value="1">1</button><button class="key" data-value="2">2</button><button class="key" data-value="3">3</button><button class="key operator" data-value="+">+</button>
-        <button class="key zero" data-value="0">0</button><button class="key" data-value=".">.</button><button class="key operator equal" data-action="equals">=</button>
-      </div>
-    </section>
-
-    <section id="historyView" class="view">
-      <div class="subhead"><button class="back-btn" data-back>←</button><h2>History</h2><button class="icon-btn" id="clearHistory">⌫</button></div>
-      <div id="historyList" class="history-list"></div>
-    </section>
-
-    <section id="portraitView" class="view">
-      <div class="subhead"><button class="back-btn" data-back>←</button><h2>Portrait</h2><button class="icon-btn" aria-hidden="true">▯</button></div>
-      <div class="portrait-card">
-        <div class="portrait-phone">▯</div>
-        <h3>Portrait Mode</h3>
-        <p>Keep Khan Calculator in portrait orientation for the best experience.</p>
-        <button id="lockPortrait" class="primary-btn">🔒 Lock Portrait</button>
-        <button id="unlockPortrait" class="secondary-btn">Unlock</button>
-      </div>
-    </section>
-
-    <section id="converterView" class="view">
-      <div class="subhead"><button class="back-btn" data-back>←</button><h2>Unit Converter</h2></div>
-      <div class="converter-layout">
-        <div id="categories" class="categories"></div>
-        <div class="converter-panel">
-          <h3 id="converterTitle">Length</h3>
-          <div class="convert-row"><input id="fromValue" inputmode="decimal" value="1"><select id="fromUnit"></select></div>
-          <button id="swapBtn" class="swap">⇅</button>
-          <div class="convert-row"><input id="toValue" readonly value="3.28084"><select id="toUnit"></select></div>
-          <div id="quickInfo" class="quick-info"></div>
-        </div>
-      </div>
-    </section>
-
-    <div id="toast" class="toast"></div>
-  </main>
-  <script src="./script.js"></script>
-</body>
-</html>
+<body><main class="app">
+<header class="topbar"><button class="icon-btn" id="menuBtn">☰</button><div class="brand">Khan Calculator</div><nav class="top-actions">
+<button class="tool-btn" data-view="history" aria-label="History">◷</button><button class="tool-btn" data-view="converter" aria-label="Unit Converter">⇄</button><button class="tool-btn" data-view="portrait" aria-label="Portrait">▯</button>
+</nav></header>
+<section id="calculatorView" class="view active">
+<div class="display-card"><div id="expression" class="expression"></div><div id="display" class="result">0</div></div>
+<div class="keypad">
+<div class="function-row"><button class="key function" data-action="clear">C</button><button class="key function" data-action="backspace">⌫</button><button class="key function" data-action="percent">%</button></div>
+<div class="operator-row"><button class="key operator" data-value="÷">÷</button><button class="key operator" data-value="×">×</button><button class="key operator" data-value="−">−</button><button class="key operator" data-value="+">+</button></div>
+<div class="number-grid">
+<button class="key" data-value="7">7</button><button class="key" data-value="8">8</button><button class="key" data-value="9">9</button>
+<button class="key" data-value="4">4</button><button class="key" data-value="5">5</button><button class="key" data-value="6">6</button>
+<button class="key" data-value="1">1</button><button class="key" data-value="2">2</button><button class="key" data-value="3">3</button>
+<button class="key function" data-action="sign">+/-</button><button class="key function" data-value="0">0</button><button class="key function" data-value=".">.</button>
+<button class="key function" data-action="paren">( )</button><button class="key operator equal" data-action="equals">=</button>
+</div></div></section>
+<section id="historyView" class="view"><div class="subhead"><button class="back-btn" data-back>←</button><h2>History</h2><button class="icon-btn" id="clearHistory">⌫</button></div><div id="historyList" class="history-list"></div></section>
+<section id="portraitView" class="view"><div class="subhead"><button class="back-btn" data-back>←</button><h2>Portrait</h2></div><div class="portrait-card"><div class="portrait-phone">▯</div><h3>Portrait Mode</h3><p>Use portrait orientation for the best calculator experience.</p><button id="lockPortrait" class="primary-btn">Lock Portrait</button><button id="unlockPortrait" class="secondary-btn">Unlock</button></div></section>
+<section id="converterView" class="view"><div class="subhead"><button class="back-btn" data-back>←</button><h2>Unit Converter</h2></div><div class="converter-layout"><div id="categories" class="categories"></div><div class="converter-panel"><h3 id="converterTitle">Length</h3><div class="convert-row"><input id="fromValue" inputmode="decimal" value="1"><select id="fromUnit"></select></div><button id="swapBtn" class="swap">⇅</button><div class="convert-row"><input id="toValue" readonly value="1"><select id="toUnit"></select></div><div id="quickInfo" class="quick-info"></div></div></div></section>
+<div id="toast" class="toast"></div></main><script src="./script.js"></script></body></html>
